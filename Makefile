@@ -1,6 +1,7 @@
 APP_NAME := $(shell grep "name = " Cargo.toml | cut -d'"' -f2)
 SOURCES := $(shell find . -type f -name "*.rs" -or -name "*.toml")
-TARGET_APP := target/release/$(APP_NAME)
+TARGET_LINUX_APP := target/release/$(APP_NAME)
+TARGET_WINDOWS_APP := target/x86_64-pc-windows-gnu/$(APP_NAME)
 
 .DEFAULT: help
 
@@ -13,22 +14,26 @@ help:
 .PHONY: install
 install: ## Install dependencies
 	@echo no deps yet
-
 .PHONY: check
 check: ## Check code
 	@cargo check
-
-$(TARGET_APP): $(SOURCES) ## Release version of the app
-	@cargo build --release
-
-.PHONY: build-release
-build-release: ## Build application
-	@$(MAKE) -s $(TARGET_APP)
-
 .PHONY: build-dev-watch
 build-dev-watch: ## Automatic execution upon updates
 	@cargo watch -w src -w Cargo.toml -x "build -q"
-
 .PHONY: run
 run: ## Run the built app
-	@$(TARGET_APP)
+	@$(TARGET_LINUX_APP)
+
+
+$(TARGET_LINUX_APP): $(SOURCES) ## Release LINUX version of the app
+	@cargo build --release
+.PHONY: build-release-linux
+build-release-linux: ## Build application
+	@$(MAKE) -s $(TARGET_LINUX_APP)
+
+
+$(TARGET_WINDOWS_APP): $(SOURCES) ## Release WINDOWS version of the app
+	@cargo build --target=x86_64-pc-windows-gnu --release
+.PHONY: build-release-windows
+build-release-windows: ## Build application
+	@$(MAKE) -s $(TARGET_WINDOWS_APP)

@@ -11,9 +11,9 @@ description: Build and Push a release on GitHub (for now)
 
 ## ToDo
 
-- [ ] Create a script/task/whatever to bump versions
-- [ ] Same but for windows/linux builds
-- [ ] Push on GitHub
+- [ ] Create a Makefile task to bump versions
+- [x] Create a Makefile task for windows/linux builds
+- [ ] Push on GitHub (or wherevererererere)
 
 ## Lessons Learned/Next steps
 
