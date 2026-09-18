@@ -1,5 +1,5 @@
 APP_NAME := $(shell grep "name = " Cargo.toml | cut -d'"' -f2)
-SOURCES := $(shell find . -type f -name "*.rs")
+SOURCES := $(shell find . -type f -name "*.rs" -or -name "*.toml")
 TARGET_APP := target/release/$(APP_NAME)
 
 .DEFAULT: help
@@ -27,7 +27,7 @@ build-release: ## Build application
 
 .PHONY: build-dev-watch
 build-dev-watch: ## Automatic execution upon updates
-	@find src -type f | entr -r -s "cargo run"
+	@cargo watch -w src -w Cargo.toml -x "build -q"
 
 .PHONY: run
 run: ## Run the built app
