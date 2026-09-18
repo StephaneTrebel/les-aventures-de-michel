@@ -37,3 +37,7 @@ $(TARGET_WINDOWS_APP): $(SOURCES) ## Release WINDOWS version of the app
 .PHONY: build-release-windows
 build-release-windows: ## Build application
 	@$(MAKE) -s $(TARGET_WINDOWS_APP)
+
+.PHONY: release-please
+release-please: ## Create/Update release
+	 release-please release-pr --token "$(shell gh auth token)" --repo-url https://github.com/StephaneTrebel/les-aventures-de-michel

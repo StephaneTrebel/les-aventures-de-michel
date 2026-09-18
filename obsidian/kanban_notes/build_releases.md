@@ -1,5 +1,5 @@
 ---
-description: Build and Push a release on GitHub (for now)
+description: Build and Push a release on GitHub for Linux and Windows targets
 ---
 ## Content
 
@@ -11,10 +11,10 @@ description: Build and Push a release on GitHub (for now)
 
 ## ToDo
 
-- [ ] Create a Makefile task to bump versions
-- [x] Create a Makefile task for windows/linux builds
-- [ ] Push on GitHub (or wherevererererere)
+- [x] Create a task to bump versions
+- [x] Create a task for windows/linux builds
+- [x] Push on GitHub (or wherevererererere)
 
 ## Lessons Learned/Next steps
 
-- Blablabla
+- We must switch to mise-en-place/fnox to strenghten variables and secret management, and also tasks -> [[migrate_to_mise-en-place_and_fnox]]

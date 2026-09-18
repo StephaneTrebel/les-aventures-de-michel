@@ -30,7 +30,9 @@ kanban-plugin: board
 
 ## ToDo
 
-- [ ] [[build_releases]]
+- [ ] [[migrate_to_mise-en-place_and_fnox]]
+- [ ] [[handle_log_level_for_release_builds]]
+- [ ] [[remove_fps_counter_for_release_builds]]
 
 
 ## InProgress
@@ -40,6 +42,7 @@ kanban-plugin: board
 ## Done
 
 **Complete**
+- [x] [[build_releases]]
 - [x] [[main_menu]]
 - [x] [[BUG - Ending a turn must replenish all MovementPoints]]
 - [x] [[Handle Unit Speed]]
@@ -79,6 +82,6 @@ kanban-plugin: board
 
 %% kanban:settings
 ```
-{"kanban-plugin":"board","list-collapse":[false,false,false,false],"metadata-keys":[{"metadataKey":"description","label":"Description","shouldHideLabel":false,"containsMarkdown":false}],"move-tags":true,"tag-action":"kanban","tag-colors":[{"tagKey":"#phase","color":"rgba(236, 250, 137, 1)","backgroundColor":""}]}
+{"kanban-plugin":"board","list-collapse":[false,false,false,true],"metadata-keys":[{"metadataKey":"description","label":"Description","shouldHideLabel":false,"containsMarkdown":false}],"move-tags":true,"tag-action":"kanban","tag-colors":[{"tagKey":"#phase","color":"rgba(236, 250, 137, 1)","backgroundColor":""}]}
 ```
 %%
