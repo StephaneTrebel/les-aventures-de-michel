@@ -19,6 +19,7 @@ unwrap_used = "deny"
 
 [dependencies]
 bevy = { version = "0.19.1", default-features = false, features = ["2d", "ui", "debug", "bevy_dev_tools", "trace", "sprite_picking"] }
+bevy_embedded_assets = "0.16.0"
 bevy_state = "0.19.1"
 noisy_bevy = "0.14.0"
 rand = "0.9.2"

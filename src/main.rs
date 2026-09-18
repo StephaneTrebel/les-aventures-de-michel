@@ -5,6 +5,7 @@ use bevy::{
     prelude::*,
     window::{PresentMode, WindowLevel, WindowResolution},
 };
+use bevy_embedded_assets::{EmbeddedAssetPlugin, PluginMode};
 use plugins::constants::{WINDOW_PHYSICAL_HEIGHT, WINDOW_PHYSICAL_WIDTH, WINDOW_SCALE_FACTOR};
 
 use crate::plugins::main_menu::IsMainMenuShown;
@@ -20,6 +21,12 @@ mod state;
 /// There we go !
 fn main() {
     let mut app = App::new();
+
+    // Embed assets in binary
+    // NEED to be before AssetPlugin, and thus DefaultPlugins
+    app.add_plugins(EmbeddedAssetPlugin {
+        mode: PluginMode::ReplaceDefault,
+    });
 
     // Bevy base plugins added with "all-in-one" DefaultPlugins plugin
     app.add_plugins(
