@@ -11,4 +11,4 @@ description: At the moment, when Michel has spent all his MP (MovementPoints), h
 
 ## Lessons Learned/Next steps
 
-- Beware ! When there will be other players ([[Multiplayer]]), only the next players unit MPs must be replenished
+- Beware ! When there will be other players ([[multiplayer]]), only the next players unit MPs must be replenished

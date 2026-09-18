@@ -7,33 +7,40 @@ kanban-plugin: board
 
 ---
 
+## Backlog
+
+- [ ] [[publish_on_steam]]
+- [ ] [[save_and_load_state]]
+- [ ] [[animate_unit_movement]]
+- [ ] [[identify_actionable_units]]
+- [ ] [[add_cutscenes]]
+- [ ] [[add_settings_menu]]
+- [ ] [[Create an Ocean Unit (boat)]]
+- [ ] [[build_WASM]]
+- [ ] [[define_a_keyboard_layout]]
+- [ ] [[multiplayer]]
+- [ ] [[add_an_input_abstraction]]
+- [ ] [[Define Z-index rules]]
+- [ ] [[Enqueue several movements at once (during several turns) that will be automatically performed at every turn end]]
+- [ ] [[Add variable MovementPoints alterations for some tiles (Marshes, Hills, etc.)]]
+- [ ] [[Handle Camera Panning through Drag&Drop]]
+- [ ] [[Define Terrain Layer Hierarchy]]
+- [ ] [[reset_the_map]]
+
+
 ## ToDo
 
-- [ ] [[Animate_unit_movement]]
-- [ ] [[Define Terrain Layer Hierarchy]]
-- [ ] [[Handle Camera Panning through Drag&Drop]]
-- [ ] [[Add variable MovementPoints alterations for some tiles (Marshes, Hills, etc.)]]
-- [ ] [[Enqueue several movements at once (during several turns) that will be automatically performed at every turn end]]
-- [ ] [[Define Z-index rules]]
-- [ ] [[WASM Build]]
-- [ ] [[Define a keyboard layout]]
-- [ ] [[Have a way to easily identify units that still can do something during a turn from units that cannot anymore]]
-- [ ] [[Create an Ocean Unit (boat)]]
-- [ ] [[Multiplayer]]
-- [ ] [[add_cutscenes]]
-- [ ] [[add_an_input_abstraction]]
-- [ ] [[save_and_load_state]]
-- [ ] [[add_settings_menu]]
+- [ ] [[build_releases]]
 
 
 ## InProgress
 
-- [ ] [[main_menu]]
 
 
 ## Done
 
 **Complete**
+- [x] [[main_menu]]
 - [x] [[BUG - Ending a turn must replenish all MovementPoints]]
 - [x] [[Handle Unit Speed]]
 - [x] [[Turn-by-turn system]]
@@ -72,6 +79,6 @@ kanban-plugin: board
 
 %% kanban:settings
 ```
-{"kanban-plugin":"board","list-collapse":[false,false,false],"metadata-keys":[{"metadataKey":"description","label":"Description","shouldHideLabel":false,"containsMarkdown":false}],"move-tags":true,"tag-action":"kanban","tag-colors":[{"tagKey":"#phase","color":"rgba(236, 250, 137, 1)","backgroundColor":""}]}
+{"kanban-plugin":"board","list-collapse":[false,false,false,false],"metadata-keys":[{"metadataKey":"description","label":"Description","shouldHideLabel":false,"containsMarkdown":false}],"move-tags":true,"tag-action":"kanban","tag-colors":[{"tagKey":"#phase","color":"rgba(236, 250, 137, 1)","backgroundColor":""}]}
 ```
 %%
