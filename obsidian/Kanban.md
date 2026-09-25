@@ -26,6 +26,8 @@ kanban-plugin: board
 - [ ] [[Handle Camera Panning through Drag&Drop]]
 - [ ] [[Define Terrain Layer Hierarchy]]
 - [ ] [[reset_the_map]]
+- [ ] [[android_build]]
+- [ ] [[ios_build]]
 
 
 ## ToDo
