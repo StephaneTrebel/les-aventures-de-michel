@@ -23,11 +23,11 @@ pub fn draw_map(
 
     let map = &map_resource.map;
     for (index, tile) in map.iter().enumerate() {
-        debug!("Map index: {index}");
+        trace!("Map index: {index}");
         let map_coordinates: MapCoordinates = index.into();
-        debug!("Map coordinates: {map_coordinates}");
+        trace!("Map coordinates: {map_coordinates}");
         let world_position: Vec2 = map_coordinates.into();
-        debug!("World Position: {world_position}");
+        trace!("World Position: {world_position}");
 
         let terrain_variant = get_terrain_variant(*tile, map, map_coordinates);
         let z: f32 = match tile.terrain {
@@ -327,7 +327,7 @@ fn get_neighbours(map: &Map, MapCoordinates(w, h): MapCoordinates) -> Neighbours
         zone: None,
         terrain: TerrainLayer::Plain,
     };
-    debug!("Getting Neighbours, {}, {}", w, h);
+    trace!("Getting Neighbours, {}, {}", w, h);
     let neighbours = Neighbours {
         top_left: map
             .get(&MapCoordinates(w.saturating_sub(1), h.saturating_add(1)))
@@ -354,6 +354,6 @@ fn get_neighbours(map: &Map, MapCoordinates(w, h): MapCoordinates) -> Neighbours
             .get(&MapCoordinates(w.saturating_add(1), h.saturating_sub(1)))
             .unwrap_or(default_tile),
     };
-    debug!("Done Getting Neighbours");
+    trace!("Done Getting Neighbours");
     neighbours
 }

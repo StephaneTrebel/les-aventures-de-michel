@@ -33,8 +33,8 @@ opt-level = 1
 opt-level = 3
 
 [profile.release]
-lto = true
-opt-level = 3
-codegen-units = 1
+# lto = true # true="fat"
+# opt-level = 3
+# codegen-units = 1
 incremental = false
 debug = false

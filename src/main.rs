@@ -1,5 +1,5 @@
 use bevy::dev_tools::picking_debug::{DebugPickingMode, DebugPickingPlugin};
-use bevy::log::LogPlugin;
+use bevy::log::{Level, LogPlugin};
 use bevy::winit::WinitSettings;
 use bevy::{
     prelude::*,
@@ -47,7 +47,14 @@ fn main() {
                 ..default()
             })
             .set(ImagePlugin::default_nearest())
-            .set(LogPlugin { ..default() }),
+            .set(LogPlugin {
+                level: if cfg!(debug_assertions) {
+                    Level::DEBUG
+                } else {
+                    Level::INFO
+                },
+                ..default()
+            }),
     )
     .insert_resource(
         // Update as fast as possible (no downgrade when losing focus)

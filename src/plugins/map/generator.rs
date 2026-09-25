@@ -84,7 +84,7 @@ fn upsert_tile_in_map(
     zone: Option<&ZoneLayer>,
     feature: Option<&FeatureLayer>,
 ) {
-    debug!("Upserting tile in map at {map_coordinates:?}");
+    trace!("Upserting tile in map at {map_coordinates:?}");
     let existing_tile = map.get(map_coordinates);
 
     map.set(map_coordinates, {
@@ -228,7 +228,7 @@ pub fn generate_map() -> Map {
             let probability = pseudo_rng_instance.random_bool(0.01);
             // Corn goes on feature-less plains
             if terrain == TerrainLayer::Plain && zone.is_none() && probability {
-                debug!("[{}] Putting Corn at {:?}", terrain, &MapCoordinates(w, h));
+                trace!("[{}] Putting Corn at {:?}", terrain, &MapCoordinates(w, h));
                 upsert_tile_in_map(
                     &mut map,
                     &MapCoordinates(w, h),
@@ -239,7 +239,7 @@ pub fn generate_map() -> Map {
             }
             // Lumber goes on forests
             else if zone.is_some_and(|k| k == ZoneLayer::Forest) && probability {
-                debug!("[{}] Putting Lumber at {:?}", terrain, &(w, h));
+                trace!("[{}] Putting Lumber at {:?}", terrain, &(w, h));
                 upsert_tile_in_map(
                     &mut map,
                     &MapCoordinates(w, h),
@@ -250,7 +250,7 @@ pub fn generate_map() -> Map {
             }
             // Fish goes on oceans
             else if terrain == TerrainLayer::Ocean && probability {
-                debug!("[{}] Putting Fish at {:?}", terrain, &(w, h));
+                trace!("[{}] Putting Fish at {:?}", terrain, &(w, h));
                 upsert_tile_in_map(
                     &mut map,
                     &MapCoordinates(w, h),

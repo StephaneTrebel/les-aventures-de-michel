@@ -17,4 +17,4 @@ description: Build and Push a release on GitHub for Linux and Windows targets
 
 ## Lessons Learned/Next steps
 
-- We must switch to mise-en-place/fnox to strenghten variables and secret management, and also tasks -> [[migrate_to_mise-en-place_and_fnox]]
+- We must switch to mise-en-place/fnox to strenghten variables and secret management, and also tasks -> [[migrate_to_mise-en-place]]

@@ -242,7 +242,7 @@ fn create_sprite_atlas(
 ) {
     // Build texture atlas that will contain all sprites from loaded folder
     let (texture_atlas_layout, texture_atlas_sources, texture_atlas_image) = create_texture_atlas(
-        loaded_folder_assets.get(&sprite_handles.0).unwrap(),
+        loaded_folder_assets.get(&sprite_handles.0).expect("Sprite handle must exist"),
         Some(ImageSampler::nearest()),
         &mut texture_assets,
     );
@@ -251,7 +251,7 @@ fn create_sprite_atlas(
     let indices = SpriteType::all()
         .iter()
         .flat_map(|&sprite_type| {
-            info!("Loading {sprite_type}");
+            debug!("Loading {sprite_type}");
             // Cloning before move-ing into inner closure
             let asset_server = asset_server.clone();
             let texture_ids = texture_atlas_sources.texture_ids.clone();
@@ -265,7 +265,7 @@ fn create_sprite_atlas(
                             })
                             .id(),
                     )
-                    .unwrap();
+                    .expect("Sprite type must be defined in asset server");
                 (
                     SpriteTypeVariant {
                         sprite_type,

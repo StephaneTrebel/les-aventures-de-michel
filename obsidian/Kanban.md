@@ -12,6 +12,7 @@ kanban-plugin: board
 - [ ] [[publish_on_steam]]
 - [ ] [[save_and_load_state]]
 - [ ] [[animate_unit_movement]]
+- [ ] [[migrate_to_mise-en-place]]
 - [ ] [[identify_actionable_units]]
 - [ ] [[add_cutscenes]]
 - [ ] [[add_settings_menu]]
@@ -32,7 +33,6 @@ kanban-plugin: board
 
 ## ToDo
 
-- [ ] [[migrate_to_mise-en-place_and_fnox]]
 - [ ] [[handle_log_level_for_release_builds]]
 - [ ] [[remove_fps_counter_for_release_builds]]
 

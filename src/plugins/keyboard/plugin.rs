@@ -44,9 +44,9 @@ fn handle_input(
     let (entity, transform) = *unit;
     // B for "build village"
     if keyboard_input.just_pressed(KeyCode::KeyQ) {
-        info!("Key pressed !");
+        trace!("Key pressed !");
         // build village !
-        info!("Building village...");
+        debug!("Building village...");
         *village.0 = Visibility::Visible;
         village.1.translation = Vec3 {
             x: transform.translation.x,

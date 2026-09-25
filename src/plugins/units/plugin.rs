@@ -22,7 +22,7 @@ fn draw_selector(
     mut commands: Commands,
     atlas: Res<SpriteAtlas>,
 ) {
-    info!("Drawing selector");
+    debug!("Drawing selector");
     commands.spawn((
         Name::new("Selector"),
         atlas.sprite(&SpriteType::Selector, 0, Some(SELECTOR_BASE_COLOR_TINT)),
@@ -31,7 +31,7 @@ fn draw_selector(
         Pickable::IGNORE,
         UnitSelector,
     ));
-    info!("Done Drawing selector");
+    debug!("Done Drawing selector");
 }
 
 fn reachable_distance(
@@ -91,7 +91,7 @@ fn move_unit(
         ),
     >,
 ) {
-    debug!("Moving entity !");
+    trace!("Moving entity !");
     let entity = selected_unit.0;
     // let transform = &mut selected_unit.1;
     // let unit = &mut selected_unit.2;
@@ -100,14 +100,14 @@ fn move_unit(
 
     let snapped_world_position = clicked_move_selector.1.translation.xy();
 
-    info!("Moving entity to {:?}", snapped_world_position);
+    trace!("Moving entity to {:?}", snapped_world_position);
     borrow_mut.1.translation = borrow_mut.1.translation.with_xy(snapped_world_position);
 
-    info!("Spending {} movement points on entity", 2);
+    trace!("Spending {} movement points on entity", 2);
     borrow_mut.2.movement_points -= clicked_move_selector.2.spent_points;
 
     commands.entity(entity).remove::<MovingEntity>();
-    info!("Removing move_selector tiles");
+    trace!("Removing move_selector tiles");
     commands.entity(clicked_move_selector.0).despawn();
     move_selectors
         .iter()
@@ -129,7 +129,7 @@ fn select_unit_on_click(
 ) {
     let mut command_entity = commands.entity(unit_single.0);
     command_entity.insert(SelectEntity);
-    info!("Selecting entity {}", unit_single.1);
+    debug!("Selecting entity {}", unit_single.1);
 }
 
 fn display_unit_selection_selector(
@@ -141,7 +141,7 @@ fn display_unit_selection_selector(
     mut commands: Commands,
 ) {
     let mut command_entity = commands.entity(selected_unit.0);
-    info!(
+    debug!(
         "Entity ({}/{}) selected at ({},{})",
         command_entity.id(),
         selected_unit.2,
@@ -194,7 +194,7 @@ fn display_unit_move_selectors(
     }
 
     let mut command_entity = commands.entity(entity);
-    info!("Selecting unit {}/{}", command_entity.id(), unit_single.3);
+    debug!("Selecting unit {}/{}", command_entity.id(), unit_single.3);
     command_entity.remove::<SelectedEntity>();
     command_entity.insert(MovingEntity);
 }

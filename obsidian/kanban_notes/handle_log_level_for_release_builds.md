@@ -3,7 +3,8 @@ description: to_be_defined
 ---
 ## Content
 
-- Blablabla
+- Properly handle log level for release builds
+	- release
 
 ## ToDo
 

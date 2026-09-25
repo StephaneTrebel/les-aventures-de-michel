@@ -100,9 +100,9 @@ fn spawn_ui_layout() -> impl Scene {
 }
 
 pub fn draw_map_ui(mut commands: Commands) {
-    info!("Drawing Map UI…");
+    debug!("Drawing Map UI…");
     commands.spawn_scene(spawn_ui_layout());
-    info!("Done drawing Map UI !");
+    debug!("Done drawing Map UI !");
 }
 
 pub fn on_end_turn_button_click(
@@ -140,7 +140,7 @@ pub fn on_end_turn_button_click(
 
         // Increment count turn
         turn_resource.turn_count += 1;
-        info!("TURN COUNT {}", turn_resource.turn_count);
+        debug!("TURN COUNT {}", turn_resource.turn_count);
 
         // Update turn count UI element
         **turn_count_text_query = format!("Turn: {}", turn_resource.turn_count).into();
@@ -172,13 +172,13 @@ pub fn elapse_end_button_clicked(
 ) {
     let (entity, mut color, mut border_color, mut button, mut end_turn_button_clicked) =
         end_button_clicked_query.into_inner();
-    info!("elapse_end_button_clicked");
+    debug!("elapse_end_button_clicked");
     if end_turn_button_clicked
         .timer
         .tick(time.delta())
         .is_finished()
     {
-        info!("FINISHED");
+        debug!("FINISHED");
         // Revert clicked button state
         ***end_button_clicked_text_query = "End Turn".to_string();
         *color = Color::BLACK.into();

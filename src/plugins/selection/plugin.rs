@@ -19,7 +19,7 @@ fn handle_click_on_entity(
     >,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        info!("Button pressed !");
+        trace!("Button pressed !");
         let window = windows.single().expect("No windows ? :(");
         if let Some(cursor_position) = window.cursor_position() {
             let (camera, camera_transform) = camera_q.single().expect("No camera ? :(");
@@ -28,12 +28,12 @@ fn handle_click_on_entity(
             if let Ok(world_position) =
                 camera.viewport_to_world_2d(camera_transform, cursor_position)
             {
-                info!("Click at {:?}", world_position);
+                trace!("Click at {:?}", world_position);
 
                 // Snap world_position to map_coordinates by converting through them
                 let map_coordinates: MapCoordinates = world_position.into();
                 let snapped_world_position: Vec2 = map_coordinates.into();
-                info!("snapped_world_position {snapped_world_position}");
+                trace!("snapped_world_position {snapped_world_position}");
 
                 let entity = entities
                     .iter()
@@ -42,13 +42,13 @@ fn handle_click_on_entity(
                     })
                     .find(|(_, t, _)| t.translation.xy() == snapped_world_position);
                 if let Some((entity, _, name)) = entity {
-                    info!("Entity clicked on {name}");
+                    debug!("Entity clicked on {name}");
                     if let Some(entity) = currently_clicked_entity {
                         commands.entity(entity.entity()).remove::<ClickedEntity>();
                     }
                     commands.entity(entity).insert(ClickedEntity);
                 } else {
-                    info!("No entity there.");
+                    trace!("No entity there.");
                 }
             }
         }
