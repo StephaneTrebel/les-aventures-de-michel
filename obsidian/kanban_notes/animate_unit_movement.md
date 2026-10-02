@@ -14,4 +14,4 @@ description: A Unit should be animated when moving
 
 ## Lessons Learned/Next steps
 
-- Blablabla
+- tu fais un component Move et tu mets tout dedans, position de départ, position d'arrivée, vitesse, progression et t'as juste à faire un system neutre qui lira ça et un mute sur le transform, ça marchera pour toutes tes unités qui le porte

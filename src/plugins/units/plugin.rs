@@ -5,8 +5,8 @@ use bevy::{
 
 use crate::{
     plugins::{
-        MAP_HEIGHT, MAP_WIDTH, SPRITE_DISPLAY_SIZE,
-        animation::{AnimationIndices, AnimationTimer},
+        MAP_HEIGHT, MAP_WIDTH, SPEED_CONSTANT, SPRITE_DISPLAY_SIZE,
+        animation::{AnimationIndices, AnimationTimer, IdleAnimation},
         map::{MapCoordinates, MapResource},
         selection::ClickedEntity,
         sprites::{SpriteAtlas, SpriteType, SpriteTypeVariant},
@@ -61,11 +61,11 @@ fn reachable_distance(
     tmp
 }
 
-fn move_unit(
+fn start_move_unit(
     mut commands: Commands,
     mut selected_unit: Single<
         (Entity, &mut Transform, &mut Unit),
-        (Without<UnitSelector>, With<MovingEntity>),
+        (Without<UnitSelector>, With<StartMovingEntity>),
     >,
     mut selector: Single<
         (&mut Visibility, &mut Transform),
@@ -75,7 +75,7 @@ fn move_unit(
         (Entity, &Transform, &MoveSelector),
         (
             With<ClickedEntity>,
-            Without<MovingEntity>,
+            Without<StartMovingEntity>,
             Without<UnitSelector>,
         ),
     >,
@@ -84,33 +84,72 @@ fn move_unit(
         (
             Without<ClickedEntity>,
             With<MoveSelector>,
-            Without<MovingEntity>,
+            Without<StartMovingEntity>,
             Without<UnitSelector>,
         ),
     >,
 ) {
-    trace!("Moving entity !");
+    trace!("Start Moving entity !");
     let entity = selected_unit.0;
-    // let transform = &mut selected_unit.1;
-    // let unit = &mut selected_unit.2;
 
     let borrow_mut = &mut selected_unit;
 
-    let snapped_world_position = clicked_move_selector.1.translation.xy();
+    commands.entity(borrow_mut.0).remove::<IdleAnimation>();
 
-    trace!("Moving entity to {:?}", snapped_world_position);
-    borrow_mut.1.translation = borrow_mut.1.translation.with_xy(snapped_world_position);
+    let start_position = borrow_mut.1.translation;
+    let end_position = clicked_move_selector.1.translation;
+    trace!("Start Moving entity to {:?}", end_position);
+    let duration = start_position.distance(end_position) / SPEED_CONSTANT;
+    commands.entity(entity).insert(MoveAnimation {
+        timer: Timer::from_seconds(duration, TimerMode::Once),
+        start_position,
+        end_position,
+    });
 
     trace!("Spending {} movement points on entity", 2);
     borrow_mut.2.movement_points -= clicked_move_selector.2.spent_points;
 
-    commands.entity(entity).remove::<MovingEntity>();
+    commands.entity(entity).remove::<StartMovingEntity>();
     trace!("Removing move_selector tiles");
     commands.entity(clicked_move_selector.0).despawn();
     move_selectors
         .iter()
         .for_each(|(entity, _)| commands.entity(entity).despawn());
     *selector.0 = Visibility::Hidden;
+}
+
+#[derive(Component)]
+struct MoveAnimation {
+    timer: Timer,
+    start_position: Vec3,
+    end_position: Vec3,
+}
+
+fn move_unit(
+    mut commands: Commands,
+    mut moving_unit: Single<(&mut Transform, &mut MoveAnimation, Entity)>,
+    time: Res<Time>,
+) {
+    trace!("Moving entity !");
+
+    let borrow_mut = &mut moving_unit;
+    borrow_mut.1.timer.tick(time.delta());
+
+    trace!("Continue Moving entity to {:?}", borrow_mut.1.end_position);
+    // LERP is Love, LERP is Life
+    let backup_z = borrow_mut.0.translation.z;
+
+    borrow_mut.0.translation = borrow_mut
+        .1
+        .start_position
+        .lerp(borrow_mut.1.end_position, borrow_mut.1.timer.fraction());
+    borrow_mut.0.translation.z = backup_z;
+
+    if borrow_mut.1.timer.just_finished() {
+        let mut entity = commands.entity(borrow_mut.2.entity());
+        entity.remove::<MoveAnimation>();
+        entity.insert(IdleAnimation);
+    }
 }
 
 fn select_unit_on_click(
@@ -121,7 +160,7 @@ fn select_unit_on_click(
             With<Unit>,
             With<ClickedEntity>,
             Without<SelectedEntity>,
-            Without<MovingEntity>,
+            Without<StartMovingEntity>,
         ),
     >,
 ) {
@@ -194,7 +233,7 @@ fn display_unit_move_selectors(
     let mut command_entity = commands.entity(entity);
     debug!("Selecting unit {}/{}", command_entity.id(), unit_single.3);
     command_entity.remove::<SelectedEntity>();
-    command_entity.insert(MovingEntity);
+    command_entity.insert(StartMovingEntity);
 }
 
 /// Component dedicated to the "selector" tile overlay
@@ -217,8 +256,9 @@ struct MoveSelector {
     spent_points: u16,
 }
 
+/// Component dedicated to the "in movement" state, for animation purposes
 #[derive(Component)]
-pub struct MovingEntity;
+pub struct StartMovingEntity;
 
 const SELECTOR_BASE_COLOR_TINT: Color = Color::Srgba(TOMATO);
 const MOVE_SELECTOR_COLOR_TINT: Color = Color::Srgba(ROYAL_BLUE);
@@ -241,6 +281,7 @@ impl Plugin for UnitPlugin {
             PreUpdate,
             (
                 select_unit_on_click,
+                start_move_unit,
                 move_unit,
                 display_unit_selection_selector,
                 display_unit_move_selectors,
@@ -299,6 +340,7 @@ pub fn spawn_michel(
         },
         Settler,
         Moveable,
+        IdleAnimation,
         animation_indices,
         AnimationTimer(Timer::from_seconds(1., TimerMode::Repeating)),
     ));

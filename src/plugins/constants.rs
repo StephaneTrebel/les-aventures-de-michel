@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::color::Color;
 
 pub const WINDOW_PHYSICAL_WIDTH: u32 = 1280; // In pixels
@@ -15,3 +17,6 @@ pub const MIN_SCALE: f32 = 0.5;
 pub const MAX_SCALE: f32 = 2.5;
 
 pub const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
+
+// Animations
+pub const SPEED_CONSTANT: f32 = 200.0;
