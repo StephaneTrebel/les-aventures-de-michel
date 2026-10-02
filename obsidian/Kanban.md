@@ -10,10 +10,7 @@ kanban-plugin: board
 ## Backlog
 
 - [ ] [[publish_on_steam]]
-- [ ] [[save_and_load_state]]
-- [ ] [[animate_unit_movement]]
 - [ ] [[migrate_to_mise-en-place]]
-- [ ] [[identify_actionable_units]]
 - [ ] [[add_cutscenes]]
 - [ ] [[add_settings_menu]]
 - [ ] [[Create an Ocean Unit (boat)]]
@@ -33,8 +30,9 @@ kanban-plugin: board
 
 ## ToDo
 
-- [ ] [[handle_log_level_for_release_builds]]
-- [ ] [[remove_fps_counter_for_release_builds]]
+- [ ] [[animate_unit_movement]]
+- [ ] [[identify_actionable_units]]
+- [ ] [[save_and_load_state]]
 
 
 ## InProgress
@@ -44,6 +42,8 @@ kanban-plugin: board
 ## Done
 
 **Complete**
+- [x] [[remove_fps_counter_for_release_builds]]
+- [x] [[handle_log_level_for_release_builds]]
 - [x] [[build_releases]]
 - [x] [[main_menu]]
 - [x] [[BUG - Ending a turn must replenish all MovementPoints]]

@@ -70,6 +70,7 @@ fn main() {
     app.add_plugins((
         ButtonsPlugin,
         CameraPlugin,
+        #[cfg(debug_assertions)]
         CustomFpsOverlayPlugin,
         KeyboardPlugin,
         MainMenuPlugin,

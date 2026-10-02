@@ -1,9 +1,8 @@
 use bevy::app::{App, Plugin};
 use bevy::platform::collections::HashMap;
+use bevy::sprite::{SpritePickingMode, SpritePickingSettings};
 use bevy::{asset::LoadedFolder, image::ImageSampler, prelude::*};
-use bevy::sprite::{SpritePickingSettings, SpritePickingMode};
 
-use crate::plugins::VARIANT_COUNT;
 use crate::state::AppState;
 
 #[derive(Resource, Default)]
@@ -21,7 +20,7 @@ fn load_sprite_folder(
     commands.insert_resource(SpriteFolder(
         asset_server.load_folder(SPRITE_DIRECTORY_NAME),
     ));
-    next_state.set(AppState::SpriteLoadInProgress)
+    next_state.set(AppState::SpriteLoadInProgress);
 }
 
 /// Advance the `AppState` once all images handles have been loaded by the `AssetServer`
@@ -45,24 +44,27 @@ fn create_texture_atlas(
     textures: &mut ResMut<Assets<Image>>,
 ) -> (TextureAtlasLayout, TextureAtlasSources, Handle<Image>) {
     let mut texture_atlas_builder = TextureAtlasBuilder::default();
-    for handle in folder.handles.iter() {
+    for handle in &folder.handles {
         let id = handle.id().typed_unchecked::<Image>();
         let Some(image) = textures.get(id) else {
             warn!(
                 "{} did not map to an `Image` asset.",
-                handle.path().unwrap()
+                handle.path().expect("Handle path must exist")
             );
             continue;
         };
         texture_atlas_builder.add_texture(Some(id), image);
     }
 
-    let (texture_atlas_layout, texture_atlas_sources, texture_atlas) =
-        texture_atlas_builder.build().unwrap();
+    let (texture_atlas_layout, texture_atlas_sources, texture_atlas) = texture_atlas_builder
+        .build()
+        .expect("Texture atlas builder must build");
 
     let texture_atlas_handle = textures.add(texture_atlas);
 
-    let mut texture_atlas_image = textures.get_mut(&texture_atlas_handle).unwrap();
+    let mut texture_atlas_image = textures
+        .get_mut(&texture_atlas_handle)
+        .expect("Texture must exist");
     texture_atlas_image.sampler = sampling.unwrap_or_default();
 
     (
@@ -126,15 +128,12 @@ impl std::fmt::Display for SpriteType {
 }
 
 impl SpriteType {
-    pub fn path(&self, variant: u8) -> String {
+    fn path(self, variant: u8) -> String {
         let sprite_name = self.to_string();
 
         match self {
             SpriteType::Selector => {
-                format!(
-                    "{SPRITE_DIRECTORY_NAME}/{}/{}_0.png",
-                    sprite_name, sprite_name
-                )
+                format!("{SPRITE_DIRECTORY_NAME}/{sprite_name}/{sprite_name}_0.png")
             }
 
             SpriteType::Debug
@@ -145,8 +144,7 @@ impl SpriteType {
             | SpriteType::Ocean
             | SpriteType::Plain => {
                 format!(
-                    "{SPRITE_DIRECTORY_NAME}/{}/sprite_terrain_{}_{}_0.png",
-                    sprite_name, sprite_name, variant
+                    "{SPRITE_DIRECTORY_NAME}/{sprite_name}/sprite_terrain_{sprite_name}_{variant}_0.png"
                 )
             }
 
@@ -156,23 +154,16 @@ impl SpriteType {
             | SpriteType::Ore
             | SpriteType::Snow => {
                 format!(
-                    "{SPRITE_DIRECTORY_NAME}/{}/sprite_terrain_{}_0_0.png",
-                    sprite_name, sprite_name
+                    "{SPRITE_DIRECTORY_NAME}/{sprite_name}/sprite_terrain_{sprite_name}_0_0.png"
                 )
             }
 
             SpriteType::Settler => {
-                format!(
-                    "{SPRITE_DIRECTORY_NAME}/units/{}/{}_0_0.png",
-                    sprite_name, sprite_name
-                )
+                format!("{SPRITE_DIRECTORY_NAME}/units/{sprite_name}/{sprite_name}_0_{variant}.png")
             }
 
             SpriteType::Village => {
-                format!(
-                    "{SPRITE_DIRECTORY_NAME}/structures/{}/{}_0_0.png",
-                    sprite_name, sprite_name
-                )
+                format!("{SPRITE_DIRECTORY_NAME}/structures/{sprite_name}/{sprite_name}_0_0.png")
             }
         }
     }
@@ -182,7 +173,10 @@ impl SpriteType {
     // Use strum crate if you want to add that (but exhaustivity check is done in
     // path() method anyway)
     pub fn all() -> &'static [SpriteType] {
-        use SpriteType::*;
+        use SpriteType::{
+            Corn, Debug, Desert, Fish, Forest, Hill, Lumber, Mountain, Ocean, Ore, Plain, Selector,
+            Settler, Snow, Village,
+        };
         &[
             Selector, Corn, Debug, Desert, Fish, Forest, Hill, Lumber, Mountain, Ocean, Ore, Plain,
             Snow, Settler, Village,
@@ -191,33 +185,33 @@ impl SpriteType {
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-struct SpriteTypeVariant {
-    sprite_type: SpriteType,
-    variant: u8,
+pub struct SpriteTypeVariant {
+    pub sprite_type: SpriteType,
+    pub variant: u8,
 }
 
 #[derive(Resource)]
 pub struct SpriteAtlas {
     pub texture: Handle<Image>,
     pub layout: Handle<TextureAtlasLayout>,
-    indices: HashMap<SpriteTypeVariant, usize>,
+    pub indices: HashMap<SpriteTypeVariant, usize>,
 }
 
 impl SpriteAtlas {
-    pub fn get(&self, sprite_type: &SpriteType, variant: u8) -> TextureAtlas {
+    fn get(&self, sprite_type: SpriteType, variant: u8) -> TextureAtlas {
         TextureAtlas {
             layout: self.layout.clone(),
             index: *self
                 .indices
                 .get(&SpriteTypeVariant {
-                    sprite_type: *sprite_type,
+                    sprite_type,
                     variant,
                 })
-                .unwrap_or_else(|| panic!("Unknow sprite type {:?}", sprite_type)),
+                .unwrap_or_else(|| panic!("Unknow sprite type {sprite_type:?}")),
         }
     }
 
-    pub fn sprite(&self, sprite_type: &SpriteType, variant: u8, color: Option<Color>) -> Sprite {
+    pub fn sprite(&self, sprite_type: SpriteType, variant: u8, color: Option<Color>) -> Sprite {
         let mut sprite =
             Sprite::from_atlas_image(self.texture.clone(), self.get(sprite_type, variant));
 
@@ -225,6 +219,13 @@ impl SpriteAtlas {
             sprite.color = c;
         }
         sprite
+    }
+}
+
+pub fn get_variant_count(sprite_type: SpriteType) -> u8 {
+    match sprite_type {
+        SpriteType::Settler => 2,
+        _ => 49,
     }
 }
 
@@ -242,7 +243,9 @@ fn create_sprite_atlas(
 ) {
     // Build texture atlas that will contain all sprites from loaded folder
     let (texture_atlas_layout, texture_atlas_sources, texture_atlas_image) = create_texture_atlas(
-        loaded_folder_assets.get(&sprite_handles.0).expect("Sprite handle must exist"),
+        loaded_folder_assets
+            .get(&sprite_handles.0)
+            .expect("Sprite handle must exist"),
         Some(ImageSampler::nearest()),
         &mut texture_assets,
     );
@@ -255,13 +258,17 @@ fn create_sprite_atlas(
             // Cloning before move-ing into inner closure
             let asset_server = asset_server.clone();
             let texture_ids = texture_atlas_sources.texture_ids.clone();
-            (0..VARIANT_COUNT).map(move |variant| {
+
+            (0..get_variant_count(sprite_type)).map(move |variant| {
                 let index = texture_ids
                     .get(
                         &asset_server
                             .get_handle(sprite_type.path(variant))
                             .unwrap_or_else(|| {
-                                panic!("Cannot find sprite type with path {}", sprite_type.path(0))
+                                panic!(
+                                    "Cannot find sprite type with path {}",
+                                    sprite_type.path(variant)
+                                )
                             })
                             .id(),
                     )
@@ -285,7 +292,7 @@ fn create_sprite_atlas(
 
     commands.remove_resource::<SpriteFolder>();
 
-    next_state.set(AppState::MapGenerationStart)
+    next_state.set(AppState::MapGenerationStart);
 }
 
 pub struct SpritePlugin;
@@ -300,7 +307,7 @@ impl Plugin for SpritePlugin {
             .add_systems(OnEnter(AppState::CreateSpriteAtlas), create_sprite_atlas)
             .insert_resource(SpritePickingSettings {
                 picking_mode: SpritePickingMode::BoundingBox,
-                require_markers: false
+                require_markers: false,
             });
     }
 }

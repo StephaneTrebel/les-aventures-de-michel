@@ -32,9 +32,9 @@ impl From<MapCoordinates> for Vec2 {
     }
 }
 
-/// Convert a Vec3 (world 3D coordinates) to a MapCoordinates
+/// Convert a Vec3 (world 3D coordinates) to a `MapCoordinates`
 impl From<Vec3> for MapCoordinates {
-    fn from(Vec3 { x, y, z }: Vec3) -> Self {
+    fn from(Vec3 { x, y, z: _ }: Vec3) -> Self {
         Self(
             ((x + f32::from(SPRITE_DISPLAY_SIZE / 2)) as u16) / SPRITE_DISPLAY_SIZE,
             ((y + f32::from(SPRITE_DISPLAY_SIZE / 2)) as u16) / SPRITE_DISPLAY_SIZE,
@@ -42,7 +42,7 @@ impl From<Vec3> for MapCoordinates {
     }
 }
 
-/// Convert a Vec2 (world coordinates) to a MapCoordinates
+/// Convert a Vec2 (world coordinates) to a `MapCoordinates`
 impl From<Vec2> for MapCoordinates {
     fn from(Vec2 { x, y }: Vec2) -> Self {
         Self(

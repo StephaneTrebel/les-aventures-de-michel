@@ -8,7 +8,7 @@ use crate::{
         MAP_HEIGHT, MAP_WIDTH, SPRITE_DISPLAY_SIZE,
         map::{MapCoordinates, MapResource},
         selection::ClickedEntity,
-        sprites::{SpriteAtlas, SpriteType},
+        sprites::{SpriteAtlas, SpriteType, SpriteTypeVariant},
     },
     state::AppState,
 };
@@ -18,14 +18,11 @@ pub struct Moveable;
 
 /// Draw the Selector sprite under the Map.
 /// It will be then moved to a tile (above everything) when the latter is selected.
-fn draw_selector(
-    mut commands: Commands,
-    atlas: Res<SpriteAtlas>,
-) {
+fn draw_selector(mut commands: Commands, atlas: Res<SpriteAtlas>) {
     debug!("Drawing selector");
     commands.spawn((
         Name::new("Selector"),
-        atlas.sprite(&SpriteType::Selector, 0, Some(SELECTOR_BASE_COLOR_TINT)),
+        atlas.sprite(SpriteType::Selector, 0, Some(SELECTOR_BASE_COLOR_TINT)),
         Transform::from_xyz(0., 0., 0.0),
         Visibility::Hidden,
         Pickable::IGNORE,
@@ -184,7 +181,7 @@ fn display_unit_move_selectors(
             Name::new(format!(
                 "MoveSelector[(({x},{y}),({transformed_x},{transformed_y}))]"
             )),
-            atlas.sprite(&SpriteType::Selector, 0, Some(MOVE_SELECTOR_COLOR_TINT)),
+            atlas.sprite(SpriteType::Selector, 0, Some(MOVE_SELECTOR_COLOR_TINT)),
             Transform::from_xyz(transformed_x, transformed_y, 90.),
             Pickable::default(),
             MoveSelector {
@@ -248,6 +245,36 @@ impl Plugin for UnitPlugin {
                 display_unit_move_selectors,
             ),
         );
+        app.add_systems(Update, animate_sprite);
+    }
+}
+
+#[derive(Component, Debug)]
+struct AnimationIndices {
+    first: usize,
+    last: usize,
+}
+
+#[derive(Component, Deref, DerefMut)]
+struct AnimationTimer(Timer);
+
+fn animate_sprite(
+    time: Res<Time>,
+    mut query: Query<(&AnimationIndices, &mut AnimationTimer, &mut Sprite)>,
+) {
+    for (indices, mut timer, mut sprite) in &mut query {
+        timer.tick(time.delta());
+
+        if timer.just_finished()
+            && let Some(atlas) = &mut sprite.texture_atlas
+        {
+            trace!("indices: {indices:?}");
+            atlas.index = if atlas.index == indices.last {
+                indices.first
+            } else {
+                indices.last
+            };
+        }
     }
 }
 
@@ -264,8 +291,31 @@ pub fn spawn_michel(
         map_coordinates = MapCoordinates(map_coordinates.0 + 1, map_coordinates.1 + 1);
     }
 
+    let animation_indices = AnimationIndices {
+        first: *atlas
+            .indices
+            .get(&SpriteTypeVariant {
+                sprite_type: SpriteType::Settler,
+                variant: 0,
+            })
+            .unwrap_or_else(|| panic!("Unknow sprite type ")),
+        last: *atlas
+            .indices
+            .get(&SpriteTypeVariant {
+                sprite_type: SpriteType::Settler,
+                variant: 1,
+            })
+            .unwrap_or_else(|| panic!("Unknow sprite type ")),
+    };
+
     commands.spawn((
-        atlas.sprite(&SpriteType::Settler, 0, None),
+        Sprite::from_atlas_image(
+            atlas.texture.clone(),
+            TextureAtlas {
+                layout: atlas.layout.clone(),
+                index: animation_indices.first,
+            },
+        ),
         Transform {
             translation: std::convert::Into::<Vec2>::into(map_coordinates).extend(21.),
             ..default()
@@ -278,5 +328,7 @@ pub fn spawn_michel(
         },
         Settler,
         Moveable,
+        animation_indices,
+        AnimationTimer(Timer::from_seconds(1., TimerMode::Repeating)),
     ));
 }

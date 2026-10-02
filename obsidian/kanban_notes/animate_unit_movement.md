@@ -1,14 +1,14 @@
 ---
-description: to_be_defined
+description: A Unit should be animated when moving
 ---
 ## Content
 
-- Blablabla
+- Michel should walk, a Wagon (TBD) should "roll", etc.
+- Idle animation ?
 
 ## ToDo
 
-- [ ] Item1
-- [ ] Item2
+- [ ] Animate Michel when moving
 
 ## Lessons Learned/Next steps
 

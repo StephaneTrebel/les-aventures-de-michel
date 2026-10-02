@@ -39,7 +39,7 @@ pub fn draw_map(
         let sprite_type = tile.terrain.get_sprite_type();
         commands.spawn((
             Name::new(create_tile_name(sprite_type, map_coordinates)),
-            atlas.sprite(&sprite_type, terrain_variant, None),
+            atlas.sprite(sprite_type, terrain_variant, None),
             Transform {
                 translation: world_position.extend(z + (index as f32 / 10000.)),
                 ..default()
@@ -53,7 +53,7 @@ pub fn draw_map(
             let sprite_type = zone.get_sprite_type();
             commands.spawn((
                 Name::new(create_tile_name(sprite_type, map_coordinates)),
-                atlas.sprite(&sprite_type, zone_variant, None),
+                atlas.sprite(sprite_type, zone_variant, None),
                 Transform {
                     translation: world_position.extend(10.),
                     ..default()
@@ -66,7 +66,7 @@ pub fn draw_map(
             let sprite_type = feature.get_sprite_type();
             commands.spawn((
                 Name::new(create_tile_name(sprite_type, map_coordinates)),
-                atlas.sprite(&sprite_type, terrain_variant, None),
+                atlas.sprite(sprite_type, terrain_variant, None),
                 Transform {
                     translation: world_position.extend(20.),
                     ..default()

@@ -1,15 +1,16 @@
 ---
-description: to_be_defined
+description: Remove FPS counter in release builds
 ---
 ## Content
 
-- Blablabla
+- Same as log level
+	- Release build -> No counter
+	- Debug build -> FPS counter shown
 
 ## ToDo
 
-- [ ] Item1
-- [ ] Item2
+- [x] Handle FPS counter depending on release/debug builds
 
 ## Lessons Learned/Next steps
 
-- Blablabla
+- None (except #[cfg] is cool 😎)

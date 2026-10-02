@@ -1,4 +1,4 @@
 mod plugin;
 pub use plugin::{
-    SpriteAtlas, SpritePlugin, SpriteType,
+    SpriteAtlas, SpritePlugin, SpriteType, SpriteTypeVariant
 };
