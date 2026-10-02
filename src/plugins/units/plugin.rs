@@ -6,7 +6,7 @@ use bevy::{
 use crate::{
     plugins::{
         MAP_HEIGHT, MAP_WIDTH, SPEED_CONSTANT, SPRITE_DISPLAY_SIZE,
-        animation::{AnimationIndices, AnimationTimer, IdleAnimation},
+        animation::{Animation, AnimationIndices, AnimationTimer, AnimationType},
         map::{MapCoordinates, MapResource},
         selection::ClickedEntity,
         sprites::{SpriteAtlas, SpriteType, SpriteTypeVariant},
@@ -88,19 +88,19 @@ fn start_move_unit(
             Without<UnitSelector>,
         ),
     >,
+    atlas: Res<SpriteAtlas>,
 ) {
     trace!("Start Moving entity !");
-    let entity = selected_unit.0;
 
     let borrow_mut = &mut selected_unit;
 
-    commands.entity(borrow_mut.0).remove::<IdleAnimation>();
+    let mut entity = commands.entity(borrow_mut.0);
 
     let start_position = borrow_mut.1.translation;
     let end_position = clicked_move_selector.1.translation;
     trace!("Start Moving entity to {:?}", end_position);
     let duration = start_position.distance(end_position) / SPEED_CONSTANT;
-    commands.entity(entity).insert(MoveAnimation {
+    entity.insert(MoveAnimation {
         timer: Timer::from_seconds(duration, TimerMode::Once),
         start_position,
         end_position,
@@ -109,7 +109,28 @@ fn start_move_unit(
     trace!("Spending {} movement points on entity", 2);
     borrow_mut.2.movement_points -= clicked_move_selector.2.spent_points;
 
-    commands.entity(entity).remove::<StartMovingEntity>();
+    // Setup moving animation
+    let animation_indices = AnimationIndices {
+        first: *atlas
+            .indices
+            .get(&SpriteTypeVariant {
+                sprite_type: SpriteType::Settler,
+                variant: 2,
+            })
+            .unwrap_or_else(|| panic!("Unknow sprite type ")),
+        last: *atlas
+            .indices
+            .get(&SpriteTypeVariant {
+                sprite_type: SpriteType::Settler,
+                variant: 3,
+            })
+            .unwrap_or_else(|| panic!("Unknow sprite type ")),
+    };
+    entity.insert(animation_indices);
+    entity.remove::<Animation>();
+    entity.insert(Animation(AnimationType::Moving));
+
+    entity.remove::<StartMovingEntity>();
     trace!("Removing move_selector tiles");
     commands.entity(clicked_move_selector.0).despawn();
     move_selectors
@@ -129,6 +150,7 @@ fn move_unit(
     mut commands: Commands,
     mut moving_unit: Single<(&mut Transform, &mut MoveAnimation, Entity)>,
     time: Res<Time>,
+    atlas: Res<SpriteAtlas>,
 ) {
     trace!("Moving entity !");
 
@@ -148,7 +170,24 @@ fn move_unit(
     if borrow_mut.1.timer.just_finished() {
         let mut entity = commands.entity(borrow_mut.2.entity());
         entity.remove::<MoveAnimation>();
-        entity.insert(IdleAnimation);
+        let animation_indices = AnimationIndices {
+            first: *atlas
+                .indices
+                .get(&SpriteTypeVariant {
+                    sprite_type: SpriteType::Settler,
+                    variant: 0,
+                })
+                .unwrap_or_else(|| panic!("Unknow sprite type ")),
+            last: *atlas
+                .indices
+                .get(&SpriteTypeVariant {
+                    sprite_type: SpriteType::Settler,
+                    variant: 1,
+                })
+                .unwrap_or_else(|| panic!("Unknow sprite type ")),
+        };
+        entity.insert(animation_indices);
+        entity.insert(Animation(AnimationType::Idle));
     }
 }
 
@@ -340,7 +379,8 @@ pub fn spawn_michel(
         },
         Settler,
         Moveable,
-        IdleAnimation,
+        // Default animation is Idle
+        Animation(AnimationType::Idle),
         animation_indices,
         AnimationTimer(Timer::from_seconds(1., TimerMode::Repeating)),
     ));

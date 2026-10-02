@@ -1,2 +1,2 @@
 mod plugin;
-pub use plugin::{AnimationIndices, AnimationPlugin, AnimationTimer, IdleAnimation};
+pub use plugin::{AnimationIndices, AnimationPlugin, AnimationTimer, Animation, AnimationType};

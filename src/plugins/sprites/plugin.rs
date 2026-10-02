@@ -224,7 +224,7 @@ impl SpriteAtlas {
 
 pub fn get_variant_count(sprite_type: SpriteType) -> u8 {
     match sprite_type {
-        SpriteType::Settler => 2,
+        SpriteType::Settler => 4,
         _ => 49,
     }
 }

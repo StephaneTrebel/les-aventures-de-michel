@@ -11,12 +11,18 @@ pub struct AnimationIndices {
 #[derive(Component, Deref, DerefMut)]
 pub struct AnimationTimer(pub(crate) Timer);
 
+#[derive(Debug)]
+pub enum AnimationType {
+    Idle,
+    Moving,
+}
+
 #[derive(Component, Debug)]
-pub struct IdleAnimation;
+pub struct Animation(pub AnimationType);
 
 fn animate_sprite_idle(
     time: Res<Time>,
-    mut query: Query<(&AnimationIndices, &mut AnimationTimer, &mut Sprite), With<IdleAnimation>>,
+    mut query: Query<(&AnimationIndices, &mut AnimationTimer, &mut Sprite)>,
 ) {
     for (indices, mut timer, mut sprite) in &mut query {
         timer.tick(time.delta());
