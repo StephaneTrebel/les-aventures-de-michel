@@ -1,3 +1,6 @@
+pub mod animation;
+pub use animation::AnimationPlugin;
+
 pub mod camera;
 pub use camera::CameraPlugin;
 

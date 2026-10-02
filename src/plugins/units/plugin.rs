@@ -6,6 +6,7 @@ use bevy::{
 use crate::{
     plugins::{
         MAP_HEIGHT, MAP_WIDTH, SPRITE_DISPLAY_SIZE,
+        animation::{AnimationIndices, AnimationTimer},
         map::{MapCoordinates, MapResource},
         selection::ClickedEntity,
         sprites::{SpriteAtlas, SpriteType, SpriteTypeVariant},
@@ -245,36 +246,6 @@ impl Plugin for UnitPlugin {
                 display_unit_move_selectors,
             ),
         );
-        app.add_systems(Update, animate_sprite);
-    }
-}
-
-#[derive(Component, Debug)]
-struct AnimationIndices {
-    first: usize,
-    last: usize,
-}
-
-#[derive(Component, Deref, DerefMut)]
-struct AnimationTimer(Timer);
-
-fn animate_sprite(
-    time: Res<Time>,
-    mut query: Query<(&AnimationIndices, &mut AnimationTimer, &mut Sprite)>,
-) {
-    for (indices, mut timer, mut sprite) in &mut query {
-        timer.tick(time.delta());
-
-        if timer.just_finished()
-            && let Some(atlas) = &mut sprite.texture_atlas
-        {
-            trace!("indices: {indices:?}");
-            atlas.index = if atlas.index == indices.last {
-                indices.first
-            } else {
-                indices.last
-            };
-        }
     }
 }
 

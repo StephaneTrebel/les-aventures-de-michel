@@ -10,8 +10,8 @@ use plugins::constants::{WINDOW_PHYSICAL_HEIGHT, WINDOW_PHYSICAL_WIDTH, WINDOW_S
 
 use crate::plugins::main_menu::IsMainMenuShown;
 use crate::plugins::{
-    ButtonsPlugin, CameraPlugin, CustomFpsOverlayPlugin, KeyboardPlugin, MainMenuPlugin, MapPlugin,
-    SelectionPlugin, SpritePlugin, TurnPlugin, UiPlugin, UnitPlugin,
+    AnimationPlugin, ButtonsPlugin, CameraPlugin, CustomFpsOverlayPlugin, KeyboardPlugin,
+    MainMenuPlugin, MapPlugin, SelectionPlugin, SpritePlugin, TurnPlugin, UiPlugin, UnitPlugin,
 };
 use crate::state::AppState;
 
@@ -68,6 +68,7 @@ fn main() {
 
     // Our game plugins
     app.add_plugins((
+        AnimationPlugin,
         ButtonsPlugin,
         CameraPlugin,
         #[cfg(debug_assertions)]

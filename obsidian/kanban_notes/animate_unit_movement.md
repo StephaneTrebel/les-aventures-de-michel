@@ -8,7 +8,9 @@ description: A Unit should be animated when moving
 
 ## ToDo
 
+- [ ] Animate Michel when idle
 - [ ] Animate Michel when moving
+- [ ] Rationalize/Refactor sprite loading to avoid hardcoding VARIANT_COUNT for each of them
 
 ## Lessons Learned/Next steps
 
