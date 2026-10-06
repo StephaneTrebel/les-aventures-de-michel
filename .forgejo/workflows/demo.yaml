@@ -1,0 +1,6 @@
+on: [push]
+jobs:
+  test:
+    runs-on: node-26
+    steps:
+      - run: echo All good!
