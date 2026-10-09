@@ -41,6 +41,9 @@ fn spawn_turn_counter() -> impl Scene {
 }
 
 #[derive(Component, Default, Clone)]
+pub struct ButtonHovered;
+
+#[derive(Component, Default, Clone)]
 pub struct ButtonClicked {
     timer: Timer,
 }
@@ -54,6 +57,7 @@ fn spawn_end_turn_button() -> impl Scene {
         Name::new("End turn button Scene")
         Button
         EndTurnButton
+        Pickable::default()
         Node {
             width: px(100),
             height: px(30),
@@ -100,10 +104,24 @@ pub fn draw_map_ui(mut commands: Commands) {
     debug!("Done drawing Map UI !");
 }
 
+/// Mark a button as hovered so that it can be checked for click afterwards
+pub fn on_button_hover(
+    mut commands: Commands,
+    interaction_query: Query<(Entity, &Interaction), Changed<Interaction>>,
+) {
+    for (entity, interaction) in interaction_query {
+        if *interaction == Interaction::Hovered {
+            debug!("on_button_hover ACTIVATED");
+            commands.entity(entity).insert(ButtonHovered);
+        }
+    }
+}
+
+/// Mark THE hovered button as clicked when applicable
 pub fn on_button_click(
     mut commands: Commands,
     mut input_focus: ResMut<InputFocus>,
-    interaction_query: Query<
+    interaction_query: Single<
         (
             Entity,
             &Interaction,
@@ -111,25 +129,25 @@ pub fn on_button_click(
             &mut BorderColor,
             &mut Button,
         ),
-        Changed<Interaction>,
+        (With<ButtonHovered>, Changed<Interaction>),
     >,
 ) {
-    for (entity, interaction, mut color, mut border_color, mut button) in interaction_query {
-        if *interaction == Interaction::Pressed {
-            debug!("on_button_click PRESSED");
-            // Mark the button as clicked
-            input_focus.set(entity, FocusCause::Pressed);
-            *color = TEAL.into();
-            *border_color = BorderColor::all(RED);
-            button.set_changed();
-            let duration = Duration::from_millis(200);
-            commands.entity(entity).insert(ButtonClicked {
-                timer: Timer::new(duration, TimerMode::Once),
-            });
-        }
+    let (entity, interaction, mut color, mut border_color, mut button) =
+        interaction_query.into_inner();
+    if *interaction == Interaction::Pressed {
+        debug!("on_button_click ACTIVATED");
+        input_focus.set(entity, FocusCause::Pressed);
+        *color = TEAL.into();
+        *border_color = BorderColor::all(RED);
+        button.set_changed();
+        let duration = Duration::from_millis(200);
+        commands.entity(entity).insert(ButtonClicked {
+            timer: Timer::new(duration, TimerMode::Once),
+        });
     }
 }
 
+/// After a while, the clicked button is reverted to the "non activated" state
 pub fn elapse_button_clicked(
     mut commands: Commands,
     button_clicked_query: Single<(
@@ -145,7 +163,6 @@ pub fn elapse_button_clicked(
         button_clicked_query.into_inner();
     if button_clicked.timer.tick(time.delta()).is_finished() {
         debug!("Finished waiting for button effect to last");
-        // Revert clicked button state
         *color = Color::BLACK.into();
         *border_color = BorderColor::all(Color::WHITE);
         button.set_changed();
@@ -183,6 +200,7 @@ impl Plugin for UiPlugin {
         app.add_systems(
             PreUpdate,
             (
+                on_button_hover,
                 on_button_click,
                 on_end_turn_button_click,
                 elapse_button_clicked,
