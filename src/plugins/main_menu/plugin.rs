@@ -5,19 +5,13 @@ use crate::plugins::main_menu::state::IsMainMenuShown;
 #[derive(Component, Default, Clone)]
 pub struct MainMenuComponent;
 
-#[derive(Component, Default, Clone)]
-pub struct ExitButton;
-
-#[derive(Component, Default, Clone)]
-pub struct ExitButtonText;
-
 fn spawn_main_title() -> impl Scene {
     bsn! {
         Name::new("Main menu Scene")
         Node {
             align_items: AlignItems::Center,
             justify_content: JustifyContent::Center,
-            margin: UiRect { left: px(10), right: px(10), top:px(10), bottom: px(100)}
+            margin: UiRect { left: px(10), right: px(10), top:px(10), bottom: px(30)}
         }
         Children [(
             Name::new("Main Menu Sprite")
@@ -48,6 +42,91 @@ fn spawn_toggle_escape_textbox() -> impl Scene {
     }
 }
 
+#[derive(Component, Default, Clone)]
+pub struct SaveButton;
+
+fn spawn_save_button() -> impl Scene {
+    bsn! {
+        Name::new("Save button Scene")
+        Button
+        SaveButton
+        Node {
+            width: px(100),
+            height: px(30),
+            align_items: AlignItems::Center,
+            justify_content: JustifyContent::Center,
+            border: UiRect::all(px(2)),
+            border_radius: BorderRadius::MAX,
+            margin: UiRect::all(px(10)),
+        }
+        BorderColor::all(Color::WHITE)
+        BackgroundColor(Color::BLACK)
+        Children [(
+            Name::new("Save button text")
+            Text::new("Save Game")
+            TextFont {
+                font_size: FontSize::Px(13.0),
+            }
+            TextColor(Color::srgb(0.9, 0.9, 0.9))
+        )]
+    }
+}
+
+pub fn on_save_button_click(
+    mut commands: Commands,
+    interaction_query: Single<&Interaction, (With<SaveButton>, Changed<Interaction>)>,
+) {
+    let interaction = interaction_query.into_inner();
+    if *interaction == Interaction::Pressed {
+        info!("Save button click !");
+        commands.write_message(AppExit::Success);
+    }
+}
+
+#[derive(Component, Default, Clone)]
+pub struct LoadButton;
+
+fn spawn_load_button() -> impl Scene {
+    bsn! {
+        Name::new("Load button Scene")
+        Button
+        LoadButton
+        Node {
+            width: px(100),
+            height: px(30),
+            align_items: AlignItems::Center,
+            justify_content: JustifyContent::Center,
+            border: UiRect::all(px(2)),
+            border_radius: BorderRadius::MAX,
+            margin: UiRect::all(px(10)),
+        }
+        BorderColor::all(Color::WHITE)
+        BackgroundColor(Color::BLACK)
+        Children [(
+            Name::new("Load button text")
+            Text::new("Load Game")
+            TextFont {
+                font_size: FontSize::Px(13.0),
+            }
+            TextColor(Color::srgb(0.9, 0.9, 0.9))
+        )]
+    }
+}
+
+pub fn on_load_button_click(
+    mut commands: Commands,
+    interaction_query: Single<&Interaction, (With<LoadButton>, Changed<Interaction>)>,
+) {
+    let interaction = interaction_query.into_inner();
+    if *interaction == Interaction::Pressed {
+        info!("Load button click !");
+        commands.write_message(AppExit::Success);
+    }
+}
+
+#[derive(Component, Default, Clone)]
+pub struct ExitButton;
+
 fn spawn_exit_button() -> impl Scene {
     bsn! {
         Name::new("Exit button Scene")
@@ -67,7 +146,6 @@ fn spawn_exit_button() -> impl Scene {
         Children [(
             Name::new("Exit button text")
             Text::new("Exit")
-            ExitButtonText
             TextFont {
                 font_size: FontSize::Px(13.0),
             }
@@ -103,8 +181,10 @@ fn spawn_main_menu_layout() -> impl Scene {
         Pickable::IGNORE
         Children [
            spawn_main_title(),
-           spawn_toggle_escape_textbox(),
-           spawn_exit_button()
+           spawn_save_button(),
+           spawn_load_button(),
+           spawn_exit_button(),
+           spawn_toggle_escape_textbox()
         ]
     }
 }
@@ -118,13 +198,15 @@ fn spawn_main_menu(mut commands: Commands) {
 pub struct MainMenuPlugin;
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            OnEnter(IsMainMenuShown::ShowMenu),
-            spawn_main_menu.run_if(in_state(IsMainMenuShown::ShowMenu)),
-        );
+        app.add_systems(OnEnter(IsMainMenuShown::ShowMenu), spawn_main_menu);
         app.add_systems(
             Update,
-            on_exit_button_click.run_if(in_state(IsMainMenuShown::ShowMenu)),
+            (
+                on_save_button_click,
+                on_load_button_click,
+                on_exit_button_click,
+            )
+                .run_if(in_state(IsMainMenuShown::ShowMenu)),
         );
     }
 }
