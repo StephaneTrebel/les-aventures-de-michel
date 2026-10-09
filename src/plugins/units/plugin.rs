@@ -99,7 +99,7 @@ fn start_move_unit(
     let start_position = borrow_mut.1.translation;
     let end_position = clicked_move_selector.1.translation;
     trace!("Start Moving entity to {:?}", end_position);
-    let duration = start_position.distance(end_position) / SPEED_CONSTANT;
+    let duration = start_position.distance(end_position) * SPEED_CONSTANT;
     entity.insert(MoveAnimation {
         timer: Timer::from_seconds(duration, TimerMode::Once),
         start_position,

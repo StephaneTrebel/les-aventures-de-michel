@@ -19,4 +19,4 @@ pub const MAX_SCALE: f32 = 2.5;
 pub const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
 
 // Animations
-pub const SPEED_CONSTANT: f32 = 20.0;
+pub const SPEED_CONSTANT: f32 = 0.005;
