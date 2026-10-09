@@ -9,6 +9,7 @@ kanban-plugin: board
 
 ## Backlog
 
+- [ ] [[identify_actionable_units]]
 - [ ] [[publish_on_steam]]
 - [ ] [[migrate_to_mise-en-place]]
 - [ ] [[add_cutscenes]]
@@ -26,22 +27,20 @@ kanban-plugin: board
 - [ ] [[reset_the_map]]
 - [ ] [[android_build]]
 - [ ] [[ios_build]]
+- [ ] [[pipeline_build]]
+- [ ] [[refactor_sprite_loading]]
+- [ ] [[custom_unit_animation_speed]]
 
 
-## ToDo
+## In Progress
 
-- [ ] [[animate_unit_movement]]
-- [ ] [[identify_actionable_units]]
 - [ ] [[save_and_load_state]]
-
-
-## InProgress
-
 
 
 ## Done
 
 **Complete**
+- [x] [[animate_unit_movement]]
 - [x] [[remove_fps_counter_for_release_builds]]
 - [x] [[handle_log_level_for_release_builds]]
 - [x] [[build_releases]]
@@ -84,6 +83,6 @@ kanban-plugin: board
 
 %% kanban:settings
 ```
-{"kanban-plugin":"board","list-collapse":[false,false,false,true],"metadata-keys":[{"metadataKey":"description","label":"Description","shouldHideLabel":false,"containsMarkdown":false}],"move-tags":true,"tag-action":"kanban","tag-colors":[{"tagKey":"#phase","color":"rgba(236, 250, 137, 1)","backgroundColor":""}]}
+{"kanban-plugin":"board","list-collapse":[false,false,false],"metadata-keys":[{"metadataKey":"description","label":"Description","shouldHideLabel":false,"containsMarkdown":false}],"move-tags":true,"tag-action":"kanban","tag-colors":[{"tagKey":"#phase","color":"rgba(236, 250, 137, 1)","backgroundColor":""}]}
 ```
 %%

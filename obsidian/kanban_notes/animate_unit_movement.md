@@ -4,14 +4,16 @@ description: A Unit should be animated when moving
 ## Content
 
 - Michel should walk, a Wagon (TBD) should "roll", etc.
-- Idle animation ?
+- Idle animation
+- `StartMovingComponent` for Move Animation Start
+- `MoveAnimation` to handle Move Animation over time
 
 ## ToDo
 
 - [x] Animate Michel when idle
 - [x] Animate Michel when moving
-- [ ] Rationalize/Refactor sprite loading to avoid hardcoding VARIANT_COUNT for each of them
 
 ## Lessons Learned/Next steps
 
-- tu fais un component Move et tu mets tout dedans, position de départ, position d'arrivée, vitesse, progression et t'as juste à faire un system neutre qui lira ça et un mute sur le transform, ça marchera pour toutes tes unités qui le porte
+- Rationalize/Refactor sprite loading to avoid hardcoding VARIANT_COUNT for each of them -> [[refactor_sprite_loading]]
+- Store speed in entity at spawn ? Store different speed for different animation types (idle, moving, etc. ?) -> [[custom_unit_animation_speed]]
